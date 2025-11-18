@@ -106,12 +106,16 @@
         .options {
             width: 100%;
             max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .option-btn {
             background-color: #ecf0f1;
             color: #2c3e50;
             margin: 8px 0;
+            width: 100%;
         }
         
         .option-btn:hover {
@@ -160,6 +164,51 @@
             text-align: center;
         }
         
+        .study-text {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .study-btn {
+            background-color: #16a085;
+        }
+        
+        .study-btn:hover {
+            background-color: #1abc9c;
+        }
+        
+        .technique-list {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+        }
+        
+        .technique-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .technique-item:hover {
+            background-color: #f1f2f6;
+        }
+        
+        .technique-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .technique-translation {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
@@ -187,6 +236,9 @@
             <h1>Выберите язык</h1>
             <button id="japanese-btn" class="btn">Японский (русские буквы, японские слова)</button>
             <button id="russian-btn" class="btn">Русский</button>
+            
+            <div class="study-text">или изучите броски</div>
+            <button id="study-btn" class="btn study-btn">Обучение</button>
         </div>
         
         <!-- Экран выбора пояса -->
@@ -213,6 +265,15 @@
             <div class="feedback" id="feedback"></div>
             <button id="next-btn" class="btn next-btn">Следующий вопрос</button>
             <button id="back-to-belt" class="btn back-btn">Назад к выбору пояса</button>
+        </div>
+        
+        <!-- Экран обучения -->
+        <div id="study-screen" class="screen">
+            <h1>Изучение бросков дзюдо</h1>
+            <div class="technique-list" id="technique-list">
+                <!-- Список техник будет добавлен через JavaScript -->
+            </div>
+            <button id="back-to-language-from-study" class="btn back-btn">Назад</button>
         </div>
     </div>
 
@@ -301,6 +362,42 @@
             }
         };
 
+        // Русские переводы для японских названий (для экрана обучения)
+        const techniqueTranslations = {
+            "Дэ-аши-барай": "Боковая подсечка под выставленную ногу",
+            "Хидза-гурума": "Подсечка в колено под отставленную ногу",
+            "Уки гоши": "Бросок скручиванием вокруг бедра",
+            "О-сото-гари": "Отхват",
+            "О-гоши": "Бросок через бедро подбивом",
+            "О-учи-гари": "Зацеп изнутри голенью",
+            "Ко-сото-гари": "Задняя подсечка",
+            "Ко-учи-гари": "Подсечка изнутри",
+            "Цури-коми-гоши": "Бросок через бедро с захватом отворота",
+            "Окури-аши-барай": "Боковая подсечка в темп шагов",
+            "Тай-отоши": "Передняя подножка",
+            "Макура-кэса-гатамэ": "Удержание сбоку с захватом ноги",
+            "Сэой-нагэ": "Бросок через спину",
+            "Иппон сэой-нагэ": "Бросок через спину с захватом руки под плечо",
+            "Татэ-шихо-гатамэ": "Удержание сверху",
+            "Ками-шихо-гатамэ": "Удержание со стороны головы",
+            "Ката-гатамэ": "Удержание плечом с захватом головы и руки",
+            "Ко-сото-гакэ": "Зацеп снаружи голенью",
+            "Харай-гоши": "Подхват под две ноги",
+            "Коши-гурума": "Бросок через бедро с захватом шеи",
+            "Учи-мата": "Бросок через голову с упором стопой в живот",
+            "Сасаи-цури-коми-аши": "Подхват изнутри под одну ногу",
+            "Тани-отоши": "Передняя подсечка",
+            "Томоэ-нагэ": "Бросок через голову с подсадом голенью",
+            "Сэой-отоши": "Бросок через спину с колен",
+            "Санкаку-гатамэ": "Треугольник",
+            "Уки-гатамэ": "Удержание",
+            "Дзюдзи-джиме": "Удушающий прием скрещивая отвороты спереди",
+            "Окури-эри-джимэ": "Удушение сзади двумя отворотами",
+            "Ката-ха-джимэ": "Удушение сзади отворотом, выключая руку",
+            "Удэ-гатамэ": "Рычаг локтя",
+            "Удэ-хишиги-джуджи-гатамэ": "Рычаг локтя захватом руки между ног"
+        };
+
         // Переменные состояния
         let currentLanguage = '';
         let currentBelt = '';
@@ -308,14 +405,17 @@
         let currentQuestionIndex = -1;
         let score = { correct: 0, total: 0 };
         let usedIndices = [];
+        let isTestCompleted = false;
 
         // Элементы DOM
         const languageScreen = document.getElementById('language-screen');
         const beltScreen = document.getElementById('belt-screen');
         const testScreen = document.getElementById('test-screen');
+        const studyScreen = document.getElementById('study-screen');
         
         const japaneseBtn = document.getElementById('japanese-btn');
         const russianBtn = document.getElementById('russian-btn');
+        const studyBtn = document.getElementById('study-btn');
         
         const yellowBeltBtn = document.getElementById('yellow-belt-btn');
         const orangeBeltBtn = document.getElementById('orange-belt-btn');
@@ -323,6 +423,7 @@
         
         const backToLanguageBtn = document.getElementById('back-to-language');
         const backToBeltBtn = document.getElementById('back-to-belt');
+        const backToLanguageFromStudyBtn = document.getElementById('back-to-language-from-study');
         
         const beltTitle = document.getElementById('belt-title');
         const techniqueVideo = document.getElementById('technique-video');
@@ -330,10 +431,12 @@
         const feedback = document.getElementById('feedback');
         const nextBtn = document.getElementById('next-btn');
         const scoreElement = document.getElementById('score');
+        const techniqueList = document.getElementById('technique-list');
 
         // Обработчики событий
         japaneseBtn.addEventListener('click', () => selectLanguage('japanese'));
         russianBtn.addEventListener('click', () => selectLanguage('russian'));
+        studyBtn.addEventListener('click', showStudyScreen);
         
         yellowBeltBtn.addEventListener('click', () => selectBelt('yellow'));
         orangeBeltBtn.addEventListener('click', () => selectBelt('orange'));
@@ -344,6 +447,7 @@
             showScreen(beltScreen);
             resetTest();
         });
+        backToLanguageFromStudyBtn.addEventListener('click', () => showScreen(languageScreen));
         
         nextBtn.addEventListener('click', nextQuestion);
 
@@ -358,6 +462,7 @@
             currentTechniques = techniques[currentLanguage][belt];
             usedIndices = [];
             score = { correct: 0, total: 0 };
+            isTestCompleted = false;
             
             // Установка заголовка в зависимости от выбранного пояса
             const beltNames = {
@@ -376,7 +481,55 @@
             screen.classList.add('active');
         }
 
+        function showStudyScreen() {
+            // Очищаем список техник
+            techniqueList.innerHTML = '';
+            
+            // Собираем все техники из всех поясов
+            const allTechniques = [
+                ...techniques.japanese.yellow,
+                ...techniques.japanese.orange,
+                ...techniques.japanese.green
+            ];
+            
+            // Сортируем по алфавиту
+            allTechniques.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Добавляем каждую технику в список
+            allTechniques.forEach(technique => {
+                const item = document.createElement('div');
+                item.className = 'technique-item';
+                
+                const name = document.createElement('div');
+                name.className = 'technique-name';
+                name.textContent = technique.name;
+                
+                const translation = document.createElement('div');
+                translation.className = 'technique-translation';
+                translation.textContent = techniqueTranslations[technique.name] || '';
+                
+                item.appendChild(name);
+                item.appendChild(translation);
+                
+                item.addEventListener('click', () => {
+                    techniqueVideo.src = technique.video;
+                    techniqueVideo.load();
+                    techniqueVideo.play();
+                });
+                
+                techniqueList.appendChild(item);
+            });
+            
+            showScreen(studyScreen);
+        }
+
         function nextQuestion() {
+            // Если тест завершен, сбрасываем его
+            if (isTestCompleted) {
+                resetTest();
+                return;
+            }
+            
             // Сброс состояния
             feedback.textContent = '';
             nextBtn.style.display = 'none';
@@ -478,20 +631,21 @@
             nextBtn.textContent = 'Начать заново';
             nextBtn.style.display = 'block';
             
-            // Изменение обработчика для кнопки "Следующий вопрос"
-            nextBtn.removeEventListener('click', nextQuestion);
-            nextBtn.addEventListener('click', () => {
-                // Сброс теста и возврат к выбору пояса
-                resetTest();
-                showScreen(beltScreen);
-            });
+            isTestCompleted = true;
         }
 
         function resetTest() {
             techniqueVideo.style.display = 'block';
             nextBtn.textContent = 'Следующий вопрос';
-            nextBtn.removeEventListener('click', () => showScreen(beltScreen));
-            nextBtn.addEventListener('click', nextQuestion);
+            isTestCompleted = false;
+            
+            // Сброс состояния теста
+            usedIndices = [];
+            score = { correct: 0, total: 0 };
+            updateScore();
+            
+            // Запуск нового теста
+            nextQuestion();
         }
 
         // Вспомогательная функция для перемешивания массива
