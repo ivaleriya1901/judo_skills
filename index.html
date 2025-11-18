@@ -233,24 +233,28 @@
             color: white;
         }
         
-        .study-video-container {
-            width: 100%;
-            max-width: 400px;
-            height: 250px;
-            background-color: #000;
-            margin: 20px 0;
-            border-radius: 8px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-        
         .video-placeholder {
             text-align: center;
             padding: 20px;
+        }
+
+        /* Стили для растягивания первой страницы */
+        #language-screen {
+            justify-content: center;
+            gap: 15px;
+        }
+
+        #language-screen h1 {
+            margin-bottom: 40px;
+        }
+
+        #language-screen .btn {
+            margin: 8px 0;
+        }
+
+        .study-section {
+            margin-top: 30px;
+            text-align: center;
         }
 
         @media (max-width: 480px) {
@@ -281,8 +285,10 @@
             <button id="japanese-btn" class="btn">Японский (русские буквы, японские слова)</button>
             <button id="russian-btn" class="btn">Русский</button>
             
-            <div class="study-text">или изучите броски</div>
-            <button id="study-btn" class="btn study-btn">Обучение</button>
+            <div class="study-section">
+                <div class="study-text">или изучите броски</div>
+                <button id="study-btn" class="btn study-btn">Обучение</button>
+            </div>
         </div>
         
         <!-- Экран выбора пояса -->
@@ -314,9 +320,6 @@
         <!-- Экран обучения -->
         <div id="study-screen" class="screen">
             <h1>Изучение бросков дзюдо</h1>
-            <div class="study-video-container" id="main-study-video">
-                <div class="video-placeholder">Выберите технику для просмотра видео</div>
-            </div>
             <div class="technique-list" id="technique-list">
                 <!-- Список техник будет добавлен через JavaScript -->
             </div>
@@ -475,7 +478,6 @@
         
         const beltTitle = document.getElementById('belt-title');
         const techniqueVideo = document.getElementById('technique-video');
-        const mainStudyVideo = document.getElementById('main-study-video');
         const optionsContainer = document.getElementById('options-container');
         const feedback = document.getElementById('feedback');
         const nextBtn = document.getElementById('next-btn');
@@ -573,6 +575,9 @@
                     // Добавляем активный класс к текущему элементу
                     item.classList.add('active');
                     
+                    // Удаляем все предыдущие видео
+                    removeAllTechniqueVideos();
+                    
                     // Показываем видео под выбранным элементом
                     showVideoUnderTechnique(item, technique);
                 });
@@ -580,19 +585,18 @@
                 techniqueList.appendChild(item);
             });
             
-            // Сбрасываем главное видео
-            mainStudyVideo.innerHTML = '<div class="video-placeholder">Выберите технику для просмотра видео</div>';
-            
             showScreen(studyScreen);
         }
 
+        function removeAllTechniqueVideos() {
+            // Находим и удаляем все контейнеры с видео техник
+            const allVideoContainers = document.querySelectorAll('.technique-video-container');
+            allVideoContainers.forEach(container => {
+                container.remove();
+            });
+        }
+
         function showVideoUnderTechnique(techniqueItem, technique) {
-            // Удаляем старое видео, если оно есть
-            const existingVideo = techniqueItem.nextElementSibling;
-            if (existingVideo && existingVideo.classList.contains('technique-video-container')) {
-                existingVideo.remove();
-            }
-            
             // Создаем контейнер для видео
             const videoContainer = document.createElement('div');
             videoContainer.className = 'technique-video-container';
