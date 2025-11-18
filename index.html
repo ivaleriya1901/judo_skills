@@ -222,8 +222,6 @@
         .technique-video-container {
             width: 100%;
             max-width: 400px;
-            height: 250px;
-            background-color: #000;
             margin: 10px 0 20px 0;
             border-radius: 8px;
             overflow: hidden;
@@ -257,6 +255,16 @@
             text-align: center;
         }
 
+        /* Новые стили для растягивания элементов на первой странице */
+        .language-options {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            width: 100%;
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
@@ -282,12 +290,14 @@
         <!-- Экран выбора языка -->
         <div id="language-screen" class="screen active">
             <h1>Выберите язык</h1>
-            <button id="japanese-btn" class="btn">Японский (русские буквы, японские слова)</button>
-            <button id="russian-btn" class="btn">Русский</button>
-            
-            <div class="study-section">
-                <div class="study-text">или изучите броски</div>
-                <button id="study-btn" class="btn study-btn">Обучение</button>
+            <div class="language-options">
+                <button id="japanese-btn" class="btn">Японский (русские буквы, японские слова)</button>
+                <button id="russian-btn" class="btn">Русский</button>
+                
+                <div class="study-section">
+                    <div class="study-text">или изучите броски</div>
+                    <button id="study-btn" class="btn study-btn">Обучение</button>
+                </div>
             </div>
         </div>
         
@@ -575,6 +585,11 @@
                     // Добавляем активный класс к текущему элементу
                     item.classList.add('active');
                     
+                    // Удаляем все существующие видео контейнеры
+                    document.querySelectorAll('.technique-video-container').forEach(el => {
+                        el.remove();
+                    });
+                    
                     // Показываем видео под выбранным элементом
                     showVideoUnderTechnique(item, technique);
                 });
@@ -586,12 +601,6 @@
         }
 
         function showVideoUnderTechnique(techniqueItem, technique) {
-            // Удаляем старое видео, если оно есть
-            const existingVideo = techniqueItem.nextElementSibling;
-            if (existingVideo && existingVideo.classList.contains('technique-video-container')) {
-                existingVideo.remove();
-            }
-            
             // Создаем контейнер для видео
             const videoContainer = document.createElement('div');
             videoContainer.className = 'technique-video-container';
@@ -599,6 +608,9 @@
             // Создаем элемент видео
             const video = document.createElement('video');
             video.controls = true;
+            video.style.width = '100%';
+            video.style.maxWidth = '400px';
+            video.style.height = 'auto';
             video.innerHTML = 'Ваш браузер не поддерживает видео.';
             
             // Устанавливаем источник видео
