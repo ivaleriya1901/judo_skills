@@ -575,7 +575,7 @@
                     // Добавляем активный класс к текущему элементу
                     item.classList.add('active');
                     
-                    // Удаляем все предыдущие видео
+                    // Удаляем все старые видео
                     removeAllTechniqueVideos();
                     
                     // Показываем видео под выбранным элементом
@@ -589,7 +589,7 @@
         }
 
         function removeAllTechniqueVideos() {
-            // Находим и удаляем все контейнеры с видео техник
+            // Находим и удаляем все контейнеры с видео
             const allVideoContainers = document.querySelectorAll('.technique-video-container');
             allVideoContainers.forEach(container => {
                 container.remove();
