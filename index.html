@@ -222,6 +222,492 @@
         .technique-video-container {
             width: 100%;
             max-width: 400px;
+            height: 250px;
+            background-color: #000;
+            margin: 10px 0 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .video-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Стили для растягивания первой страницы */
+        #language-screen {
+            justify-content: center;
+            gap: 15px;
+        }
+
+        #language-screen h1 {
+            margin-bottom: 40px;
+        }
+
+        #language-screen .btn {
+            margin: 8px 0;
+        }
+
+        .study-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            .btn {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Экран выбора языка -->
+        <div id="language-screen" class="screen active">
+            <h1>Выберите язык</h1>
+            <button id="japanese-btn" class="btn">Японский (русские буквы, японские слова)</button>
+            <button id="russian-btn" class="btn">Русский</button>
+            
+            <div class="study-section">
+                <div class="study-text">или изучите броски</div>
+                <button id="study-btn" class="btn study-btn">Обучение</button>
+            </div>
+        </div>
+        
+        <!-- Экран выбора пояса -->
+        <div id="belt-screen" class="screen">
+            <h1>Выберите пояс</h1>
+            <button id="yellow-belt-btn" class="btn belt-btn yellow-belt">Желтый пояс</button>
+            <button id="orange-belt-btn" class="btn belt-btn orange-belt">Оранжевый пояс</button>
+            <button id="green-belt-btn" class="btn belt-btn green-belt">Зеленый пояс</button>
+            <button id="back-to-language" class="btn back-btn">Назад</button>
+        </div>
+        
+        <!-- Экран тестирования -->
+        <div id="test-screen" class="screen">
+            <h2 id="belt-title">Тестирование</h2>
+            <div class="score" id="score">Верно: 0/0</div>
+            <div class="video-container">
+                <video id="technique-video" controls>
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
+            <div class="options" id="options-container">
+                <!-- Кнопки с вариантами ответов будут добавлены через JavaScript -->
+            </div>
+            <div class="feedback" id="feedback"></div>
+            <button id="next-btn" class="btn next-btn">Следующий вопрос</button>
+            <button id="back-to-belt" class="btn back-btn">Назад к выбору пояса</button>
+        </div>
+        
+        <!-- Экран обучения -->
+        <div id="study-screen" class="screen">
+            <h1>Изучение бросков дзюдо</h1>
+            <div class="technique-list" id="technique-list">
+                <!-- Список техник будет добавлен через JavaScript -->
+            </div>
+            <button id="back-to-language-from-study" class="btn back-btn">Назад</button>
+        </div>
+    </div>
+
+    <script>
+        // Данные для тестирования
+        const techniques = {
+            japanese: {
+                yellow: [
+                    {video: "videos/de_ashi_barai.mp4", name: "Дэ-аши-барай"},
+                    {video: "videos/hiza_guruma.mp4", name: "Хидза-гурума"},
+                    {video: "videos/uki_goshi.mp4", name: "Уки гоши"},
+                    {video: "videos/o_soto_gari.mp4", name: "О-сото-гари"},
+                    {video: "videos/o_goshi.mp4", name: "О-гоши"},
+                    {video: "videos/o_uchi_gari.mp4", name: "О-учи-гари"}
+                ],
+                orange: [
+                    {video: "videos/ko_soto_gari.mp4", name: "Ко-сото-гари"},
+                    {video: "videos/ko_uchi_gari.mp4", name: "Ко-учи-гари"},
+                    {video: "videos/tsuri_komi_goshi.mp4", name: "Цури-коми-гоши"},
+                    {video: "videos/okuri_ashi_barai.mp4", name: "Окури-аши-барай"},
+                    {video: "videos/tai_otoshi.mp4", name: "Тай-отоши"},
+                    {video: "videos/makura_kesa_gatame.mp4", name: "Макура-кэса-гатамэ"},
+                    {video: "videos/seoi_nage.mp4", name: "Сэой-нагэ"},
+                    {video: "videos/ippon_seoi_nage.mp4", name: "Иппон сэой-нагэ"},
+                    {video: "videos/tate_shiho_gatame.mp4", name: "Татэ-шихо-гатамэ"},
+                    {video: "videos/kami_shiho_gatame.mp4", name: "Ками-шихо-гатамэ"},
+                    {video: "videos/kata_gatame.mp4", name: "Ката-гатамэ"}
+                ],
+                green: [
+                    {video: "videos/ko_soto_gake.mp4", name: "Ко-сото-гакэ"},
+                    {video: "videos/harai_goshi.mp4", name: "Харай-гоши"},
+                    {video: "videos/koshi_guruma.mp4", name: "Коши-гурума"},
+                    {video: "videos/uchi_mata.mp4", name: "Учи-мата"},
+                    {video: "videos/sasae_tsuri_komi_ashi.mp4", name: "Сасаи-цури-коми-аши"},
+                    {video: "videos/tani_otoshi.mp4", name: "Тани-отоши"},
+                    {video: "videos/tomoe_nage.mp4", name: "Томоэ-нагэ"},
+                    {video: "videos/seoi_otoshi.mp4", name: "Сэой-отоши"},
+                    {video: "videos/sankaku_gatame.mp4", name: "Санкаку-гатамэ"},
+                    {video: "videos/uki_gatame.mp4", name: "Уки-гатамэ"},
+                    {video: "videos/juji_jime.mp4", name: "Дзюдзи-джиме"},
+                    {video: "videos/okuri_eri_jime.mp4", name: "Окури-эри-джимэ"},
+                    {video: "videos/kata_ha_jime.mp4", name: "Ката-ха-джимэ"},
+                    {video: "videos/ude_gatame.mp4", name: "Удэ-гатамэ"},
+                    {video: "videos/ude_hishigi_juji_gatame.mp4", name: "Удэ-хишиги-джуджи-гатамэ"}
+                ]
+            },
+            russian: {
+                yellow: [
+                    {video: "videos/de_ashi_barai.mp4", name: "Боковая подсечка под выставленную ногу"},
+                    {video: "videos/hiza_guruma.mp4", name: "Подсечка в колено под отставленную ногу"},
+                    {video: "videos/uki_goshi.mp4", name: "Бросок скручиванием вокруг бедра"},
+                    {video: "videos/o_soto_gari.mp4", name: "Отхват"},
+                    {video: "videos/o_goshi.mp4", name: "Бросок через бедро подбивом"},
+                    {video: "videos/o_uchi_gari.mp4", name: "Зацеп изнутри голенью"}
+                ],
+                orange: [
+                    {video: "videos/ko_soto_gari.mp4", name: "Задняя подсечка"},
+                    {video: "videos/ko_uchi_gari.mp4", name: "Подсечка изнутри"},
+                    {video: "videos/tsuri_komi_goshi.mp4", name: "Бросок через бедро с захватом отворота"},
+                    {video: "videos/okuri_ashi_barai.mp4", name: "Боковая подсечка в темп шагов"},
+                    {video: "videos/tai_otoshi.mp4", name: "Передняя подножка"},
+                    {video: "videos/makura_kesa_gatame.mp4", name: "Удержание сбоку с захватом ноги"},
+                    {video: "videos/seoi_nage.mp4", name: "Бросок через спину"},
+                    {video: "videos/ippon_seoi_nage.mp4", name: "Бросок через спину с захватом руки под плечо"},
+                    {video: "videos/tate_shiho_gatame.mp4", name: "Удержание сверху"},
+                    {video: "videos/kami_shiho_gatame.mp4", name: "Удержание со стороны головы"},
+                    {video: "videos/kata_gatame.mp4", name: "Удержание плечом с захватом головы и руки"}
+                ],
+                green: [
+                    {video: "videos/ko_soto_gake.mp4", name: "Зацеп снаружи голенью"},
+                    {video: "videos/harai_goshi.mp4", name: "Подхват под две ноги"},
+                    {video: "videos/koshi_guruma.mp4", name: "Бросок через бедро с захватом шеи"},
+                    {video: "videos/uchi_mata.mp4", name: "Бросок через голову с упором стопой в живот"},
+                    {video: "videos/sasae_tsuri_komi_ashi.mp4", name: "Подхват изнутри под одну ногу"},
+                    {video: "videos/tani_otoshi.mp4", name: "Передняя подсечка"},
+                    {video: "videos/tomoe_nage.mp4", name: "Бросок через голову с подсадом голенью"},
+                    {video: "videos/seoi_otoshi.mp4", name: "Бросок через спину с колен"},
+                    {video: "videos/sankaku_gatame.mp4", name: "Треугольник"},
+                    {video: "videos/uki_gatame.mp4", name: "Удержание"},
+                    {video: "videos/juji_jime.mp4", name: "Удушающий прием скрещивая отвороты спереди"},
+                    {video: "videos/okuri_eri_jime.mp4", name: "Удушение сзади двумя отворотами"},
+                    {video: "videos/kata_ha_jime.mp4", name: "Удушение сзади отворотом, выключая руку"},
+                    {video: "videos/ude_gatame.mp4", name: "Рычаг локтя"},
+                    {video: "videos/ude_hishigi_juji_gatame.mp4", name: "Рычаг локтя захватом руки между ног"}
+                ]
+            }
+        };
+
+        // Русские переводы для японских названий (для экрана обучения)
+        const techniqueTranslations = {
+            "Дэ-аши-барай": "Боковая подсечка под выставленную ногу",
+            "Хидза-гурума": "Подсечка в колено под отставленную ногу",
+            "Уки гоши": "Бросок скручиванием вокруг бедра",
+            "О-сото-гари": "Отхват",
+            "О-гоши": "Бросок через бедро подбивом",
+            "О-учи-гари": "Зацеп изнутри голенью",
+            "Ко-сото-гари": "Задняя подсечка",
+            "Ко-учи-гари": "Подсечка изнутри",
+            "Цури-коми-гоши": "Бросок через бедро с захватом отворота",
+            "Окури-аши-барай": "Боковая подсечка в темп шагов",
+            "Тай-отоши": "Передняя подножка",
+            "Макура-кэса-гатамэ": "Удержание сбоку с захватом ноги",
+            "Сэой-нагэ": "Бросок через спину",
+            "Иппон сэой-нагэ": "Бросок через спину с захватом руки под плечо",
+            "Татэ-шихо-гатамэ": "Удержание сверху",
+            "Ками-шихо-гатамэ": "Удержание со стороны головы",
+            "Ката-гатамэ": "Удержание плечом с захватом головы и руки",
+            "Ко-сото-гакэ": "Зацеп снаружи голенью",
+            "Харай-гоши": "Подхват под две ноги",
+            "Коши-гурума": "Бросок через бедро с захватом шеи",
+            "Учи-мата": "Бросок через голову с упором стопой в живот",
+            "Сасаи-цури-коми-аши": "Подхват изнутри под одну ногу",
+            "Тани-отоши": "Передняя подсечка",
+            "Томоэ-нагэ": "Бросок через голову с подсадом голенью",
+            "Сэой-отоши": "Бросок через спину с колен",
+            "Санкаку-гатамэ": "Треугольник",
+            "Уки-гатамэ": "Удержание",
+            "Дзюдзи-джиме": "Удушающий прием скрещивая отвороты спереди",
+            "Окури-эри-джимэ": "Удушение сзади двумя отворотами",
+            "Ката-ха-джимэ": "Удушение сзади отворотом, выключая руку",
+            "Удэ-гатамэ": "Рычаг локтя",
+            "Удэ-хишиги-джуджи-гатамэ": "Рычаг локтя захватом руки между ног"
+        };
+
+        // Переменные состояния
+        let currentLanguage = '';
+        let currentBelt = '';
+        let currentTechniques = [];
+        let currentQuestionIndex = -1;
+        let score = { correct: 0, total: 0 };
+        let usedIndices = [];
+        let isTestCompleted = false;
+        let currentActiveTechnique = null;
+
+        // Элементы DOM
+        const languageScreen = document.getElementById('language-screen');
+        const beltScreen = document.getElementById('belt-screen');
+        const testScreen = document.getElementById('test-screen');
+        const studyScreen = document.getElementById('study-screen');
+        
+        const japaneseBtn = document.getElementById('japanese-btn');
+        const russianBtn = document.getElementById('russian-btn');
+        const studyBtn = document.getElementById('study-btn');
+        
+        const yellowBeltBtn = document.getElementById('yellow-belt-btn');
+        const orangeBeltBtn = document.getElementById('orange-belt-btn');
+        const greenBeltBtn = document.getElementById('green-belt-btn');
+        
+        const backToLanguageBtn = document.getElementById('back-to-language');
+        const backToBeltBtn = document.getElementById('back-to-belt');
+        const backToLanguageFromStudyBtn = document.getElementById('back-to-language-from-study');
+        
+        const beltTitle = document.getElementById('belt-title');
+        const techniqueVideo = document.getElementById('technique-video');
+        const optionsContainer = document.getElementById('options-container');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const scoreElement = document.getElementById('score');
+        const techniqueList = document.getElementById('technique-list');
+
+        // Обработчики событий
+        japaneseBtn.addEventListener('click', () => selectLanguage('japanese'));
+        russianBtn.addEventListener('click', () => selectLanguage('russian'));
+        studyBtn.addEventListener('click', showStudyScreen);
+        
+        yellowBeltBtn.addEventListener('click', () => selectBelt('yellow'));
+        orangeBeltBtn.addEventListener('click', () => selectBelt('orange'));
+        greenBeltBtn.addEventListener('click', () => selectBelt('green'));
+        
+        backToLanguageBtn.addEventListener('click', () => showScreen(languageScreen));
+        backToBeltBtn.addEventListener('click', () => {
+            showScreen(beltScreen);
+            resetTest();
+        });
+        backToLanguageFromStudyBtn.addEventListener('click', () => showScreen(languageScreen));
+        
+        nextBtn.addEventListener('click', nextQuestion);
+
+        // Функции
+        function selectLanguage(language) {
+            currentLanguage = language;
+            showScreen(beltScreen);
+        }
+
+        function selectBelt(belt) {
+            currentBelt = belt;
+            currentTechniques = techniques[currentLanguage][belt];
+            usedIndices = [];
+            score = { correct: 0, total: 0 };
+            isTestCompleted = false;
+            
+            // Установка заголовка в зависимости от выбранного пояса
+            const beltNames = {
+                'yellow': 'Желтый пояс',
+                'orange': 'Оранжевый пояс',
+                'green': 'Зеленый пояс'
+            };        
+        .active {
+            display: flex;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .belt-btn {
+            background-color: #e67e22;
+        }
+        
+        .belt-btn:hover {
+            background-color: #d35400;
+        }
+        
+        .yellow-belt {
+            background-color: #f1c40f;
+            color: #333;
+        }
+        
+        .orange-belt {
+            background-color: #e67e22;
+        }
+        
+        .green-belt {
+            background-color: #27ae60;
+        }
+        
+        .video-container {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background-color: #000;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .options {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .option-btn {
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            margin: 8px 0;
+            width: 100%;
+        }
+        
+        .option-btn:hover {
+            background-color: #bdc3c7;
+        }
+        
+        .correct {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .incorrect {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 30px;
+        }
+        
+        .next-btn {
+            background-color: #9b59b6;
+            margin-top: 20px;
+        }
+        
+        .next-btn:hover {
+            background-color: #8e44ad;
+        }
+        
+        .back-btn {
+            background-color: #95a5a6;
+            margin-top: 10px;
+        }
+        
+        .back-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .score {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .study-text {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .study-btn {
+            background-color: #16a085;
+        }
+        
+        .study-btn:hover {
+            background-color: #1abc9c;
+        }
+        
+        .technique-list {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .technique-item {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .technique-item:hover {
+            background-color: #f1f2f6;
+        }
+        
+        .technique-item.active {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+        }
+        
+        .technique-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .technique-translation {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .technique-video-container {
+            width: 100%;
+            max-width: 400px;
             margin: 10px 0 20px 0;
             border-radius: 8px;
             overflow: hidden;
@@ -992,5 +1478,6 @@
     </script>
 </body>
 </html>
+
 
 
