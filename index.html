@@ -231,6 +231,11 @@
             align-items: center;
             justify-content: center;
             color: white;
+            display: none; /* Скрываем по умолчанию */
+        }
+        
+        .technique-video-container.active {
+            display: flex; /* Показываем только активное видео */
         }
         
         .video-placeholder {
@@ -566,60 +571,49 @@
                 item.appendChild(name);
                 item.appendChild(translation);
                 
+                // Создаем контейнер для видео (изначально скрытый)
+                const videoContainer = document.createElement('div');
+                videoContainer.className = 'technique-video-container';
+                videoContainer.id = `video-${technique.name.replace(/\s+/g, '-')}`;
+                
+                const video = document.createElement('video');
+                video.controls = true;
+                video.innerHTML = 'Ваш браузер не поддерживает видео.';
+                video.src = technique.video;
+                
+                videoContainer.appendChild(video);
+                
                 item.addEventListener('click', () => {
                     // Убираем активный класс у всех элементов
                     document.querySelectorAll('.technique-item').forEach(el => {
                         el.classList.remove('active');
                     });
                     
+                    // Скрываем все видео
+                    document.querySelectorAll('.technique-video-container').forEach(video => {
+                        video.classList.remove('active');
+                    });
+                    
                     // Добавляем активный класс к текущему элементу
                     item.classList.add('active');
                     
-                    // Удаляем все старые видео
-                    removeAllTechniqueVideos();
-                    
                     // Показываем видео под выбранным элементом
-                    showVideoUnderTechnique(item, technique);
+                    if (!videoContainer.parentNode) {
+                        item.parentNode.insertBefore(videoContainer, item.nextSibling);
+                    }
+                    videoContainer.classList.add('active');
+                    
+                    // Загружаем и воспроизводим видео
+                    video.load();
+                    video.play().catch(e => {
+                        console.log('Автовоспроизведение заблокировано:', e);
+                    });
                 });
                 
                 techniqueList.appendChild(item);
             });
             
             showScreen(studyScreen);
-        }
-
-        function removeAllTechniqueVideos() {
-            // Находим и удаляем все контейнеры с видео
-            const allVideoContainers = document.querySelectorAll('.technique-video-container');
-            allVideoContainers.forEach(container => {
-                container.remove();
-            });
-        }
-
-        function showVideoUnderTechnique(techniqueItem, technique) {
-            // Создаем контейнер для видео
-            const videoContainer = document.createElement('div');
-            videoContainer.className = 'technique-video-container';
-            
-            // Создаем элемент видео
-            const video = document.createElement('video');
-            video.controls = true;
-            video.innerHTML = 'Ваш браузер не поддерживает видео.';
-            
-            // Устанавливаем источник видео
-            video.src = technique.video;
-            
-            // Добавляем видео в контейнер
-            videoContainer.appendChild(video);
-            
-            // Вставляем видео под выбранным элементом
-            techniqueItem.parentNode.insertBefore(videoContainer, techniqueItem.nextSibling);
-            
-            // Загружаем и воспроизводим видео
-            video.load();
-            video.play().catch(e => {
-                console.log('Автовоспроизведение заблокировано:', e);
-            });
         }
 
         function nextQuestion() {
