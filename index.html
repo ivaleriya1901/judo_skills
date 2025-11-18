@@ -183,6 +183,7 @@
             width: 100%;
             max-width: 500px;
             margin-top: 20px;
+            margin-bottom: 20px;
         }
         
         .technique-item {
@@ -207,6 +208,16 @@
         .technique-translation {
             color: #7f8c8d;
             font-size: 14px;
+        }
+        
+        .study-video-container {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background-color: #000;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
         @media (max-width: 480px) {
@@ -270,6 +281,11 @@
         <!-- Экран обучения -->
         <div id="study-screen" class="screen">
             <h1>Изучение бросков дзюдо</h1>
+            <div class="study-video-container">
+                <video id="study-video" controls>
+                    Ваш браузер не поддерживает видео.
+                </video>
+            </div>
             <div class="technique-list" id="technique-list">
                 <!-- Список техник будет добавлен через JavaScript -->
             </div>
@@ -427,6 +443,7 @@
         
         const beltTitle = document.getElementById('belt-title');
         const techniqueVideo = document.getElementById('technique-video');
+        const studyVideo = document.getElementById('study-video');
         const optionsContainer = document.getElementById('options-container');
         const feedback = document.getElementById('feedback');
         const nextBtn = document.getElementById('next-btn');
@@ -512,9 +529,16 @@
                 item.appendChild(translation);
                 
                 item.addEventListener('click', () => {
-                    techniqueVideo.src = technique.video;
-                    techniqueVideo.load();
-                    techniqueVideo.play();
+                    // Устанавливаем источник видео и загружаем его
+                    studyVideo.src = technique.video;
+                    studyVideo.load();
+                    
+                    // Воспроизводим видео после загрузжения метаданных
+                    studyVideo.addEventListener('loadeddata', function() {
+                        studyVideo.play().catch(e => {
+                            console.log('Автовоспроизведение заблокировано:', e);
+                        });
+                    }, { once: true });
                 });
                 
                 techniqueList.appendChild(item);
