@@ -31,7 +31,6 @@
             display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             flex: 1;
             width: 100%;
         }
@@ -95,6 +94,11 @@
             margin-bottom: 20px;
             border-radius: 8px;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
         }
         
         video {
@@ -200,6 +204,11 @@
             background-color: #f1f2f6;
         }
         
+        .technique-item.active {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+        }
+        
         .technique-name {
             font-weight: bold;
             margin-bottom: 5px;
@@ -210,6 +219,20 @@
             font-size: 14px;
         }
         
+        .technique-video-container {
+            width: 100%;
+            max-width: 400px;
+            height: 250px;
+            background-color: #000;
+            margin: 10px 0 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
         .study-video-container {
             width: 100%;
             max-width: 400px;
@@ -218,8 +241,18 @@
             margin: 20px 0;
             border-radius: 8px;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
         }
         
+        .video-placeholder {
+            text-align: center;
+            padding: 20px;
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
@@ -281,10 +314,8 @@
         <!-- Экран обучения -->
         <div id="study-screen" class="screen">
             <h1>Изучение бросков дзюдо</h1>
-            <div class="study-video-container">
-                <video id="study-video" controls>
-                    Ваш браузер не поддерживает видео.
-                </video>
+            <div class="study-video-container" id="main-study-video">
+                <div class="video-placeholder">Выберите технику для просмотра видео</div>
             </div>
             <div class="technique-list" id="technique-list">
                 <!-- Список техник будет добавлен через JavaScript -->
@@ -422,6 +453,7 @@
         let score = { correct: 0, total: 0 };
         let usedIndices = [];
         let isTestCompleted = false;
+        let currentActiveTechnique = null;
 
         // Элементы DOM
         const languageScreen = document.getElementById('language-screen');
@@ -443,7 +475,7 @@
         
         const beltTitle = document.getElementById('belt-title');
         const techniqueVideo = document.getElementById('technique-video');
-        const studyVideo = document.getElementById('study-video');
+        const mainStudyVideo = document.getElementById('main-study-video');
         const optionsContainer = document.getElementById('options-container');
         const feedback = document.getElementById('feedback');
         const nextBtn = document.getElementById('next-btn');
@@ -502,6 +534,9 @@
             // Очищаем список техник
             techniqueList.innerHTML = '';
             
+            // Сбрасываем активную технику
+            currentActiveTechnique = null;
+            
             // Собираем все техники из всех поясов
             const allTechniques = [
                 ...techniques.japanese.yellow,
@@ -516,6 +551,7 @@
             allTechniques.forEach(technique => {
                 const item = document.createElement('div');
                 item.className = 'technique-item';
+                item.dataset.techniqueName = technique.name;
                 
                 const name = document.createElement('div');
                 name.className = 'technique-name';
@@ -529,22 +565,57 @@
                 item.appendChild(translation);
                 
                 item.addEventListener('click', () => {
-                    // Устанавливаем источник видео и загружаем его
-                    studyVideo.src = technique.video;
-                    studyVideo.load();
+                    // Убираем активный класс у всех элементов
+                    document.querySelectorAll('.technique-item').forEach(el => {
+                        el.classList.remove('active');
+                    });
                     
-                    // Воспроизводим видео после загрузжения метаданных
-                    studyVideo.addEventListener('loadeddata', function() {
-                        studyVideo.play().catch(e => {
-                            console.log('Автовоспроизведение заблокировано:', e);
-                        });
-                    }, { once: true });
+                    // Добавляем активный класс к текущему элементу
+                    item.classList.add('active');
+                    
+                    // Показываем видео под выбранным элементом
+                    showVideoUnderTechnique(item, technique);
                 });
                 
                 techniqueList.appendChild(item);
             });
             
+            // Сбрасываем главное видео
+            mainStudyVideo.innerHTML = '<div class="video-placeholder">Выберите технику для просмотра видео</div>';
+            
             showScreen(studyScreen);
+        }
+
+        function showVideoUnderTechnique(techniqueItem, technique) {
+            // Удаляем старое видео, если оно есть
+            const existingVideo = techniqueItem.nextElementSibling;
+            if (existingVideo && existingVideo.classList.contains('technique-video-container')) {
+                existingVideo.remove();
+            }
+            
+            // Создаем контейнер для видео
+            const videoContainer = document.createElement('div');
+            videoContainer.className = 'technique-video-container';
+            
+            // Создаем элемент видео
+            const video = document.createElement('video');
+            video.controls = true;
+            video.innerHTML = 'Ваш браузер не поддерживает видео.';
+            
+            // Устанавливаем источник видео
+            video.src = technique.video;
+            
+            // Добавляем видео в контейнер
+            videoContainer.appendChild(video);
+            
+            // Вставляем видео под выбранным элементом
+            techniqueItem.parentNode.insertBefore(videoContainer, techniqueItem.nextSibling);
+            
+            // Загружаем и воспроизводим видео
+            video.load();
+            video.play().catch(e => {
+                console.log('Автовоспроизведение заблокировано:', e);
+            });
         }
 
         function nextQuestion() {
