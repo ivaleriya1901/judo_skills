@@ -298,6 +298,19 @@
             color: white;
         }
 
+        /* Стили для сообщения о совместимости */
+        .browser-notice {
+            margin-top: 30px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 100%;
+        }
+
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
@@ -329,6 +342,11 @@
             <div class="study-section">
                 <div class="study-text">или изучите броски</div>
                 <button id="study-btn" class="btn study-btn">Обучение</button>
+            </div>
+            
+            <!-- Добавленное сообщение о совместимости браузеров -->
+            <div class="browser-notice">
+                Видео работают корректно в браузерах Chrome и Яндекс.Браузер
             </div>
         </div>
         
@@ -814,39 +832,3 @@
     </script>
 </body>
 </html>
-
-// Добавьте этот код в ваш существующий скрипт
-function showBrowserRecommendation() {
-    const userAgent = navigator.userAgent;
-    
-    if (!userAgent.includes("Chrome") || userAgent.includes("Edg") || userAgent.includes("OPR")) {
-        // Создаем баннер-рекомендацию
-        const banner = document.createElement('div');
-        banner.style.cssText = `
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #fff3cd;
-            border-bottom: 1px solid #ffeaa7;
-            padding: 10px;
-            text-align: center;
-            z-index: 10000;
-            font-size: 14px;
-        `;
-        
-        banner.innerHTML = `
-            <span style="color: #856404;">
-                ⚠️ Для лучшей производительности рекомендуется использовать Google Chrome. 
-            </span>
-            <button onclick="this.parentElement.style.display='none'" style="margin-left: 10px; background: #6c757d; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">
-                ✕
-            </button>
-        `;
-        
-        document.body.appendChild(banner);
-    }
-}
-
-// Вызываем при загрузке
-document.addEventListener('DOMContentLoaded', showBrowserRecommendation);
