@@ -234,20 +234,6 @@
             text-align: center;
             padding: 20px;
         }
-        
-        .browser-notice {
-    margin-top: 30px;
-    text-align: center;
-    color: #7f8c8d;
-    font-size: 14px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-    border: 2px solid #bdc3c7; /* Добавляем рамку */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Небольшая тень для объема */
-}
 
         /* Стили для растягивания первой страницы */
         #language-screen {
@@ -323,6 +309,22 @@
             border-radius: 8px;
             max-width: 400px;
             width: 100%;
+            border: 2px solid #bdc3c7;
+        }
+
+        .browser-link {
+            color: #f1c40f;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        }
+
+        .browser-link:hover {
+            color: #f39c12;
+            text-shadow: 0 0 15px rgba(243, 156, 18, 0.8);
+            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
@@ -354,14 +356,17 @@
             <button id="russian-btn" class="btn">Русский</button>
             
             <div class="study-section">
-                <h2 class="study-text">или изучите броски</h2>
+                <div class="study-text">или изучите броски</div>
                 <button id="study-btn" class="btn study-btn">Обучение</button>
             </div>
             
             <!-- Добавленное сообщение о совместимости браузеров -->
-            <h3 class="browser-notice">
-                Видео работают корректно в браузерах Chrome и Яндекс.Браузер
-            </h3>
+            <div class="browser-notice">
+                Видео работают корректно в браузерах 
+                <span class="browser-link" id="chrome-link">Хром</span> 
+                и 
+                <span class="browser-link" id="yandex-link">Яндекс</span>
+            </div>
         </div>
         
         <!-- Экран выбора пояса -->
@@ -557,6 +562,10 @@
         const scoreElement = document.getElementById('score');
         const techniqueList = document.getElementById('technique-list');
 
+        // Новые элементы для ссылок на браузеры
+        const chromeLink = document.getElementById('chrome-link');
+        const yandexLink = document.getElementById('yandex-link');
+
         // Обработчики событий
         japaneseBtn.addEventListener('click', () => selectLanguage('japanese'));
         russianBtn.addEventListener('click', () => selectLanguage('russian'));
@@ -574,6 +583,17 @@
         backToLanguageFromStudyBtn.addEventListener('click', () => showScreen(languageScreen));
         
         nextBtn.addEventListener('click', nextQuestion);
+
+        // Обработчики для ссылок на браузеры
+        chromeLink.addEventListener('click', () => {
+            // Открываем эту же страницу в Chrome
+            window.location.href = 'googlechrome://' + window.location.href;
+        });
+
+        yandexLink.addEventListener('click', () => {
+            // Открываем эту же страницу в Яндекс Браузере
+            window.location.href = 'yabrowser://' + window.location.href;
+        });
 
         // Функции
         function selectLanguage(language) {
@@ -846,5 +866,3 @@
     </script>
 </body>
 </html>
-
-
