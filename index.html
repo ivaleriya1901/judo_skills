@@ -814,3 +814,39 @@
     </script>
 </body>
 </html>
+
+// Добавьте этот код в ваш существующий скрипт
+function showBrowserRecommendation() {
+    const userAgent = navigator.userAgent;
+    
+    if (!userAgent.includes("Chrome") || userAgent.includes("Edg") || userAgent.includes("OPR")) {
+        // Создаем баннер-рекомендацию
+        const banner = document.createElement('div');
+        banner.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #fff3cd;
+            border-bottom: 1px solid #ffeaa7;
+            padding: 10px;
+            text-align: center;
+            z-index: 10000;
+            font-size: 14px;
+        `;
+        
+        banner.innerHTML = `
+            <span style="color: #856404;">
+                ⚠️ Для лучшей производительности рекомендуется использовать Google Chrome. 
+            </span>
+            <button onclick="this.parentElement.style.display='none'" style="margin-left: 10px; background: #6c757d; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer;">
+                ✕
+            </button>
+        `;
+        
+        document.body.appendChild(banner);
+    }
+}
+
+// Вызываем при загрузке
+document.addEventListener('DOMContentLoaded', showBrowserRecommendation);
