@@ -312,19 +312,10 @@
             border: 2px solid #bdc3c7;
         }
 
-        .browser-link {
+        .browser-highlight {
             color: #f1c40f;
             font-weight: bold;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
             text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
-        }
-
-        .browser-link:hover {
-            color: #f39c12;
-            text-shadow: 0 0 15px rgba(243, 156, 18, 0.8);
-            text-decoration: underline;
         }
 
         @media (max-width: 480px) {
@@ -363,9 +354,9 @@
             <!-- Добавленное сообщение о совместимости браузеров -->
             <div class="browser-notice">
                 Видео работают корректно в браузерах 
-                <span class="browser-link" id="chrome-link">Хром</span> 
+                <span class="browser-highlight">Хром</span> 
                 и 
-                <span class="browser-link" id="yandex-link">Яндекс</span>
+                <span class="browser-highlight">Яндекс</span>
             </div>
         </div>
         
@@ -562,10 +553,6 @@
         const scoreElement = document.getElementById('score');
         const techniqueList = document.getElementById('technique-list');
 
-        // Новые элементы для ссылок на браузеры
-        const chromeLink = document.getElementById('chrome-link');
-        const yandexLink = document.getElementById('yandex-link');
-
         // Обработчики событий
         japaneseBtn.addEventListener('click', () => selectLanguage('japanese'));
         russianBtn.addEventListener('click', () => selectLanguage('russian'));
@@ -583,17 +570,6 @@
         backToLanguageFromStudyBtn.addEventListener('click', () => showScreen(languageScreen));
         
         nextBtn.addEventListener('click', nextQuestion);
-
-        // Обработчики для ссылок на браузеры
-        chromeLink.addEventListener('click', () => {
-            // Открываем эту же страницу в Chrome
-            window.location.href = 'googlechrome://' + window.location.href;
-        });
-
-        yandexLink.addEventListener('click', () => {
-            // Открываем эту же страницу в Яндекс Браузере
-            window.location.href = 'yabrowser://' + window.location.href;
-        });
 
         // Функции
         function selectLanguage(language) {
