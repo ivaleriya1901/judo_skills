@@ -698,9 +698,20 @@
             
             const currentTechnique = currentTechniques[currentQuestionIndex];
             
-            // Загрузка видео
+            // Загрузка видео - ИСПРАВЛЕНИЕ: добавляем load() и обработку ошибок
             techniqueVideo.src = currentTechnique.video;
             techniqueVideo.load();
+            
+            // Добавляем обработчики событий для видео
+            techniqueVideo.onerror = function() {
+                console.error('Ошибка загрузки видео:', currentTechnique.video);
+                feedback.textContent = 'Ошибка загрузки видео. Проверьте путь к файлу.';
+                feedback.style.color = '#e74c3c';
+            };
+            
+            techniqueVideo.onloadeddata = function() {
+                console.log('Видео успешно загружено:', currentTechnique.video);
+            };
             
             // Создание вариантов ответов
             const correctAnswer = currentTechnique.name;
@@ -803,5 +814,3 @@
     </script>
 </body>
 </html>
-
-
